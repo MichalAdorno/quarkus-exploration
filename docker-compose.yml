@@ -4,13 +4,11 @@ services:
     image: postgres
     restart: always
     environment:
-      POSGRES_USER: quarkus
-      POSTGRES_PASSWORD: quarkus
-      POSTGRES_MULTIPLE_DATABASES: 'quarkus'
+      POSTGRES_DB: "quarkus_db"
+      POSTGRES_USER: "quarkus"
+      POSTGRES_PASSWORD: "secret"
     ports:
       - 5432:5432
-    volumes:
-      - ./create_postgres_databases.sh:/docker-entrypoint-initdb.d/create_postgres_databases.sh
     networks:
       - quarkus_local
   pgadmin4:
@@ -28,6 +26,8 @@ services:
     build:
       context: .
       dockerfile: src/main/docker/Dockerfile.jvm
+    environment:
+      DB_URL: "postgres"
     ports:
       - 8080:8080
     networks:

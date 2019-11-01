@@ -1,7 +1,6 @@
-package org.adorno.learning;
+package org.adorno.learning.controller;
 
 import org.adorno.learning.config.GreetingConfig;
-import org.eclipse.microprofile.config.inject.ConfigProperty;
 
 import javax.inject.Inject;
 import javax.ws.rs.GET;
@@ -18,7 +17,6 @@ public class ExampleResource {
     @GET
     @Produces(MediaType.TEXT_PLAIN)
     public String hello() {
-
         return String.format(
                 "hello %s %s %s",
                 greetingConfig.title,
@@ -26,4 +24,5 @@ public class ExampleResource {
                 greetingConfig.suffix);
 
     }
+
 }
