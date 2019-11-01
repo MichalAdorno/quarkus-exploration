@@ -10,10 +10,10 @@ import javax.inject.Inject;
 import javax.transaction.Transactional;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
-import javax.validation.Valid;
+import javax.validation.Validator;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
-import javax.validation.Validator;
+import javax.ws.rs.core.Response;
 import java.util.List;
 import java.util.Set;
 
@@ -56,7 +56,7 @@ public class PersonManagementController {
 
     @POST
     @Path("/create")
-    public Person createPerson(final PersonDTO newPersonDTO) {
+    public Response createPerson(final PersonDTO newPersonDTO) {
 
         final Set<ConstraintViolation<PersonDTO>> violations = validator.validate(newPersonDTO);
         if (!violations.isEmpty()) {
@@ -69,12 +69,14 @@ public class PersonManagementController {
         newPerson.setStatus(newPersonDTO.getStatus());
 
         Person.persist(newPerson);
-        return Person.find(
+        final Person createdPerson = Person.find(
                 "name = :name and status = :status",
                 Parameters.with("name", newPersonDTO.getName())
                         .and("status", newPersonDTO.getStatus())
                         .map())
                 .firstResult();
+
+        return Response.accepted(createdPerson).build();
     }
 
 }
