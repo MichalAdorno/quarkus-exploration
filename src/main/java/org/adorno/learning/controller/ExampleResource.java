@@ -12,7 +12,7 @@ import javax.ws.rs.core.MediaType;
 public class ExampleResource {
 
     @Inject
-    private GreetingConfig greetingConfig;
+    GreetingConfig greetingConfig;
 
     @GET
     @Produces(MediaType.TEXT_PLAIN)

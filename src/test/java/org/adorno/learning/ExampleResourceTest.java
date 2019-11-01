@@ -1,5 +1,7 @@
 package org.adorno.learning;
 
+import io.quarkus.test.common.QuarkusTestResource;
+import io.quarkus.test.h2.H2DatabaseTestResource;
 import io.quarkus.test.junit.QuarkusTest;
 import org.adorno.learning.config.GreetingConfig;
 import org.junit.jupiter.api.Test;
@@ -10,15 +12,16 @@ import static io.restassured.RestAssured.given;
 import static org.hamcrest.CoreMatchers.is;
 
 @QuarkusTest
+@QuarkusTestResource(H2DatabaseTestResource.class)
 public class ExampleResourceTest {
 
     @Inject
-    private GreetingConfig greetingConfig;
+    GreetingConfig greetingConfig;
 
     @Test
     public void testHelloEndpoint() {
         given()
-                .when().get("/hello")
+                .when().get("/application/hello")
                 .then()
                 .statusCode(200)
                 .header("Content-Type", "text/plain;charset=UTF-8")
