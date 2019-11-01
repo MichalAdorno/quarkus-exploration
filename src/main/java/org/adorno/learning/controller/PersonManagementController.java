@@ -8,9 +8,14 @@ import org.adorno.learning.dto.PersonDTO;
 
 import javax.inject.Inject;
 import javax.transaction.Transactional;
+import javax.validation.ConstraintViolation;
+import javax.validation.ConstraintViolationException;
+import javax.validation.Valid;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
+import javax.validation.Validator;
 import java.util.List;
+import java.util.Set;
 
 @Path("/personmgmt")
 @Consumes(MediaType.APPLICATION_JSON)
@@ -20,6 +25,8 @@ public class PersonManagementController {
 
     @Inject
     PersonRepository personRepository;
+    @Inject
+    Validator validator;
 
     @GET
     @Path("/all")
@@ -49,8 +56,14 @@ public class PersonManagementController {
 
     @POST
     @Path("/create")
-    public Person createPerson(PersonDTO newPersonDTO) {
-        Person newPerson = new Person();
+    public Person createPerson(final PersonDTO newPersonDTO) {
+
+        final Set<ConstraintViolation<PersonDTO>> violations = validator.validate(newPersonDTO);
+        if (!violations.isEmpty()) {
+            throw new ConstraintViolationException(violations);
+        }
+
+        final Person newPerson = new Person();
         newPerson.setBirth(newPersonDTO.getBirth());
         newPerson.setName(newPersonDTO.getName());
         newPerson.setStatus(newPersonDTO.getStatus());
