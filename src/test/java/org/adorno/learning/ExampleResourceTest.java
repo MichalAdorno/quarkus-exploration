@@ -1,4 +1,4 @@
-package org.acme;
+package org.adorno.learning;
 
 import io.quarkus.test.junit.QuarkusTest;
 import org.junit.jupiter.api.Test;

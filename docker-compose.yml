@@ -1,0 +1,36 @@
+version: '3'
+services:
+  postgres:
+    image: postgres
+    restart: always
+    environment:
+      POSGRES_USER: quarkus
+      POSTGRES_PASSWORD: quarkus
+      POSTGRES_MULTIPLE_DATABASES: 'quarkus'
+    ports:
+      - 5432:5432
+    volumes:
+      - ./create_postgres_databases.sh:/docker-entrypoint-initdb.d/create_postgres_databases.sh
+    networks:
+      - quarkus_local
+  pgadmin4:
+    image: dpage/pgadmin4
+    environment:
+      PGADMIN_DEFAULT_EMAIL: 'db@quarkus.com'
+      PGADMIN_DEFAULT_PASSWORD: 'quarkus'
+    ports:
+      - 8083:80
+    depends_on:
+      - postgres
+    networks:
+      - quarkus_local
+  quarkus_exploration:
+    build:
+      context: .
+      dockerfile: src/main/docker/Dockerfile.jvm
+    ports:
+      - 8080:8080
+    networks:
+      - quarkus_local
+networks:
+  quarkus_local:

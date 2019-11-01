@@ -1,4 +1,4 @@
-package org.acme;
+package org.adorno.learning;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
