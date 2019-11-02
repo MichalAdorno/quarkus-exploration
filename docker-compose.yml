@@ -4,40 +4,84 @@ services:
     image: postgres
     restart: always
     environment:
-      POSTGRES_DB: "quarkus_db"
-      POSTGRES_USER: "quarkus"
-      POSTGRES_PASSWORD: "secret"
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
     ports:
-      - 5432:5432
+      - ${DB_PORT}:5432
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -h postgres -p 5432"]
+      test: ["CMD-SHELL", "pg_isready -h postgres -p ${DB_PORT}"]
       interval: 10s
       timeout: 5s
       retries: 5
     networks:
       - quarkus_local
-  pgadmin4:
-    image: dpage/pgadmin4
-    environment:
-      PGADMIN_DEFAULT_EMAIL: 'db@quarkus.com'
-      PGADMIN_DEFAULT_PASSWORD: 'quarkus'
-    ports:
-      - 8083:80
-    depends_on:
-      - postgres
-    networks:
-      - quarkus_local
+#    volumes:
+#      - "postgres_persistence:/var/lib/postgresql/data"
+#  pgadmin4:
+#    image: dpage/pgadmin4
+#    environment:
+#      PGADMIN_DEFAULT_EMAIL: 'db@quarkus.com'
+#      PGADMIN_DEFAULT_PASSWORD: 'quarkus'
+#    ports:
+#      - 8083:80
+#    depends_on:
+#      - postgres
+#    networks:
+#      - quarkus_local
   quarkus_exploration:
     build:
       context: .
       dockerfile: src/main/docker/Dockerfile.jvm
     environment:
       DOCKER_DB_IP: ${DOCKER_DB_IP}
+      DOCKER_KEYCLOAK_IP: ${DOCKER_KEYCLOAK_IP}
     ports:
       - 8080:8080
     depends_on:
       - postgres
+      - keycloak
     networks:
       - quarkus_local
+  security_database:
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_DB: ${KEYCLOAK_DB_NAME}
+      POSTGRES_USER: ${KEYCLOAK_DB_USER}
+      POSTGRES_PASSWORD: ${KEYCLOAK_DB_PASSWORD}
+    ports:
+      - ${KEYCLOAK_DB_PORT}:5432
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -h security_database -p ${KEYCLOAK_DB_PORT}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - security_local
+  #    volumes:
+  #      - "security_persistence:/var/lib/postgresql/data"
+  keycloak:
+    image: jboss/keycloak
+    environment:
+      KEYCLOAK_USER: ${KEYCLOAK_USER}
+      KEYCLOAK_PASSWORD: ${KEYCLOAK_PASSWORD}
+      DB_VENDOR: ${KEYCLOAK_DB_VENDOR}
+      DB_ADDR: ${KEYCLOAK_DB_HOST}
+      DB_PORT: ${KEYCLOAK_DB_PORT}
+      DB_DATABASE: ${KEYCLOAK_DB_NAME}
+      DB_USER: ${KEYCLOAK_DB_USER}
+      DB_PASSWORD: ${KEYCLOAK_DB_PASSWORD}
+    ports:
+      - "8180:8080"
+    networks:
+      - quarkus_local
+      - security_local
+    depends_on:
+      - security_database
 networks:
   quarkus_local:
+  security_local:
+volumes:
+  postgres_persistence:
+  security_persistence:
