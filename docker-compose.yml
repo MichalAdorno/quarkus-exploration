@@ -74,6 +74,7 @@ services:
       DB_PASSWORD: ${KEYCLOAK_DB_PASSWORD}
     ports:
       - "8180:8080"
+      - "8443:8443"
     networks:
       - quarkus_local
       - security_local
