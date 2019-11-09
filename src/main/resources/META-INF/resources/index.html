@@ -15,8 +15,10 @@
           overflow: hidden;
           min-height: 300px;
           max-height: 300px;
-      }
-
+        }
+        #connection {
+            display: block;
+        }
     </style>
 </head>
 
@@ -30,9 +32,9 @@
 </nav>
 <div class="container">
     <br/>
-    <div class="row">
+    <div class="row" id="connection">
         <input id="userFrom" class="col-md-4" type="text" placeholder="your name">
-        <input id="usersTo" class="col-md-4" type="text" placeholder="your interlocutors' names">
+        <input id="usersTo" class="col-md-4" type="text" placeholder="chat room">
         <button id="connect" class="col-md-1 btn btn-primary" type="button">connect</button>
         <br/>
         <br/>
