@@ -6,6 +6,7 @@ import javax.websocket.*;
 import javax.websocket.server.PathParam;
 import javax.websocket.server.ServerEndpoint;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 
 @ServerEndpoint("/chat/{userFrom}/{chatRoom}")
@@ -65,12 +66,19 @@ public class ChatSocketController {
                     System.out.println(customSession.getSession().getId());
                     System.out.println(customSession.getSession().getUserPrincipal());
 
-                    customSession.getSession().getAsyncRemote().sendObject(message, result -> {
-                        if (result.getException() != null) {
-                            System.out.println("Unable to send message: " + result.getException());
-                        }
-                    });
+                    sendMessageAsync(message, customSession);
 
+                });
+    }
+
+    private void sendMessageAsync(final String message,
+                                  final CustomSession customSession) {
+        customSession.getSession()
+                .getAsyncRemote()
+                .sendObject(message, result -> {
+                    if (Objects.nonNull(result.getException())) {
+                        System.out.format("Unable to send message: %s", result.getException());
+                    }
                 });
     }
 
@@ -82,8 +90,15 @@ public class ChatSocketController {
                 .userFrom(userFrom)
                 .chatRoom(chatRoom)
                 .build();
+        if (sessions.containsKey(userFrom)) {
+            sendMessageAsync(
+                    "Unable to join (username already taken)",
+                    customSession
+            );
+        } else {
+            sessions.put(userFrom, customSession);
+        }
 
-        sessions.putIfAbsent(userFrom, customSession);
     }
 
 
