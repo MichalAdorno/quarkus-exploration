@@ -1,0 +1,9 @@
+#chat {
+    resize: none;
+    overflow: hidden;
+    min-height: 300px;
+    max-height: 300px;
+}
+#connection {
+    display: block;
+}

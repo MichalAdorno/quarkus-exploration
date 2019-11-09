@@ -83,7 +83,7 @@ public class ChatSocketController {
                 .chatRoom(chatRoom)
                 .build();
 
-        sessions.put(userFrom, customSession);
+        sessions.putIfAbsent(userFrom, customSession);
     }
 
 
