@@ -31,7 +31,8 @@
 <div class="container">
     <br/>
     <div class="row">
-        <input id="name" class="col-md-4" type="text" placeholder="your name">
+        <input id="userFrom" class="col-md-4" type="text" placeholder="your name">
+        <input id="usersTo" class="col-md-4" type="text" placeholder="your interlocutors' names">
         <button id="connect" class="col-md-1 btn btn-primary" type="button">connect</button>
         <br/>
         <br/>
@@ -57,7 +58,7 @@
       $( document ).ready(function() {
           $("#connect").click(connect);
           $("#send").click(sendMessage);
-          $("#name").keypress(function(event){
+          $("#userFrom").keypress(function(event){
               if(event.keyCode == 13 || event.which == 13) {
                   connect();
               }
@@ -70,19 +71,20 @@
         $("#chat").change(function() {
             scrollToBottom();
           });
-          $("#name").focus();
+          $("#userFrom").focus();
       });
       var connect = function() {
           if (! connected) {
-              var name = $("#name").val();
-              console.log("Endpoint: " + "ws://" + location.host + "/application/chat/" + name);
-              socket = new WebSocket("ws://" + location.host + "/application/chat/" + name);
+              var userFrom = $("#userFrom").val();
+              var usersTo = $("#usersTo").val();
+              console.log("Endpoint: " + "ws://" + location.host + "/application/chat/" + userFrom + "/" + usersTo);
+              socket = new WebSocket("ws://" + location.host + "/application/chat/" + userFrom + "/" + usersTo);
               socket.onopen = function() {
                   connected = true;
                   console.log("Connected to the web socket");
                   $("#send").attr("disabled", false);
                   $("#connect").attr("disabled", true);
-                  $("#name").attr("disabled", true);
+                  $("#userFrom").attr("disabled", true);
                   $("#msg").focus();
               };
               socket.onmessage =function(m) {
