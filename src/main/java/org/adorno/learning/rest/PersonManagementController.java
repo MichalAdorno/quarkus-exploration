@@ -1,4 +1,4 @@
-package org.adorno.learning.controller;
+package org.adorno.learning.rest;
 
 import io.quarkus.panache.common.Parameters;
 import org.adorno.learning.dao.PersonRepository;

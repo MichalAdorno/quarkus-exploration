@@ -1,4 +1,4 @@
-package org.adorno.learning.controller;
+package org.adorno.learning.rest;
 
 import org.adorno.learning.config.GreetingConfig;
 
